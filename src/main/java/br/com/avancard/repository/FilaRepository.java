@@ -19,7 +19,7 @@ public class FilaRepository {
 
     public List<Fila> findByStatus(String status) throws SQLException {
         List<Fila> filas = new ArrayList<>();
-        String sql = "SELECT id, cpf, matricula, status FROM fila WHERE status = ?";
+        String sql = "SELECT id, cpf, matricula, status,mst,situacaoTextBox FROM fila WHERE status = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, status);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -29,6 +29,8 @@ public class FilaRepository {
                     fila.setCpf(resultSet.getString("cpf"));
                     fila.setMatricula(resultSet.getString("matricula"));
                     fila.setStatus(resultSet.getString("status"));
+                    fila.setMst(resultSet.getString("mst"));
+                    fila.setSituacaoTextBox(resultSet.getString("situacaoTextBox"));
                     filas.add(fila);
                 }
             }
@@ -37,10 +39,12 @@ public class FilaRepository {
     }
 
     public void save(Fila fila) throws SQLException {
-        String sql = "UPDATE fila SET status = ? WHERE id = ?";
+        String sql = "UPDATE fila SET status = ?, mst = ?, situacaoTextBox = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, fila.getStatus());
-            statement.setInt(2, fila.getId());
+            statement.setString(2, fila.getMst());
+            statement.setString(3, fila.getSituacaoTextBox());
+            statement.setInt(4, fila.getId());
             statement.executeUpdate();
         }
     }

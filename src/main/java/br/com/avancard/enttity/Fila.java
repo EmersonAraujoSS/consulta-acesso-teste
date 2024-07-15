@@ -12,6 +12,9 @@ public class Fila {
     private String cpf;
     private String matricula;
     private String status;
+    private String mst;
+    private String situacaoTextBox;
+
 
 
     //CONSTRUTOR
@@ -45,7 +48,18 @@ public class Fila {
     public void setStatus(String status) {
         this.status = status;
     }
-
+    public String getMst() {
+        return mst;
+    }
+    public void setMst(String mst) {
+        this.mst = mst;
+    }
+    public String getSituacaoTextBox() {
+        return situacaoTextBox;
+    }
+    public void setSituacaoTextBox(String situacaoTextBox) {
+        this.situacaoTextBox = situacaoTextBox;
+    }
 
 
 

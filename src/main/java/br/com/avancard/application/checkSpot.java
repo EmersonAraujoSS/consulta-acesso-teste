@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,14 @@ public class checkSpot {
 
         if (filaList.isEmpty()) {
             return;
+        }
+
+        // Fechar todas as instâncias do Edge antes de iniciar a aplicação
+        try {
+            Runtime.getRuntime().exec("taskkill /F /IM msedge.exe");
+            TimeUnit.SECONDS.sleep(5); // Esperar um tempo para garantir que todos os processos sejam fechados
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         System.setProperty("webdriver.edge.driver", "C:\\edge\\msedgedriver.exe");
@@ -56,21 +65,14 @@ public class checkSpot {
                 processarConsulta(driver, item);
             }
 
-            // Verificar e aceitar o popup de confirmação, se presente
-            try {
-                WebElement confirmPopup = driver.findElement(By.id("ucAjaxModalPopupConfirmacao1_btnConfirmarPopup"));
-                confirmPopup.click();
-                // Aguardar um tempo depois de clicar em "Confirmar"
-                TimeUnit.SECONDS.sleep(2);
+            // Realiza o logout
+            WebElement logoutButton = driver.findElement(By.id("btnDesconectar"));
+            logoutButton.click();
 
-                // Executar novamente o processo para cada item após confirmar o popup
-                for (Fila item : filaList) {
-                    processarConsulta(driver, item);
-                }
+            WebElement confirmLogout = driver.findElement(By.id("ucModalPopupDesconectar1_btnOKPopup"));
+            confirmLogout.click();
 
-            } catch (Exception e) {
-                // Caso o popup não esteja presente, apenas continue sem fazer nada
-            }
+            TimeUnit.SECONDS.sleep(5);
 
         } finally {
             if (driver != null) {
@@ -94,15 +96,11 @@ public class checkSpot {
 
             //Processar a consulta e extrair os dados necessários
             String mst = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[2]")).getText().trim();
-            String msr = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[3]")).getText().trim();
-            String msd = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[4]")).getText().trim();
-            String mct = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_3']/td[2]")).getText().trim();
-            String mcr = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_3']/td[3]")).getText().trim();
-            String mcd = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_3']/td[4]")).getText().trim();
-
-            String categoriaTextBox = driver.findElement(By.id("body_categoriaTextBox")).getAttribute("value").trim();
             String situacaoTextBox = driver.findElement(By.id("body_txtSituacao")).getAttribute("value").trim();
 
+            // Atualiza os dados no objeto Fila
+            item.setMst(mst);
+            item.setSituacaoTextBox(situacaoTextBox);
 
             item.setStatus("PROCESSADO");
             filaRepository.save(item);
@@ -112,7 +110,7 @@ public class checkSpot {
         } catch (Exception e) {
             item.setStatus("ERRO");
             filaRepository.save(item);
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(5);
         }
     }
 }
