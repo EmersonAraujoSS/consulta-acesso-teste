@@ -94,20 +94,35 @@ public class checkSpot {
             WebElement psqButton = driver.findElement(By.id("body_pesquisarButton"));
             psqButton.click();
 
-            //Processar a consulta e extrair os dados necessários
-            String mst = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[2]")).getText().trim();
-            String situacaoTextBox = driver.findElement(By.id("body_txtSituacao")).getAttribute("value").trim();
 
-            // Atualiza os dados no objeto Fila
-            item.setMst(mst);
-            item.setSituacaoTextBox(situacaoTextBox);
+            // Verificar se o CPF/Matrícula não foi encontrado
+            if (driver.getPageSource().contains("CPF/Matrícula não encontrado")) {
+                WebElement okButton = driver.findElement(By.id("body_ucAjaxModalPopup1_btnConfirmarPopup"));
+                okButton.click();
 
-            item.setStatus("PROCESSADO");
-            filaRepository.save(item);
+                // Atualiza o status do item para "NAO LOCALIZADO"
+                item.setStatus("NAO LOCALIZADO");
+                filaRepository.save(item);
 
-            TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(3); // Aguarda antes de continuar
+            } else {
+
+                //Processar a consulta e extrair os dados necessários
+                String mst = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[2]")).getText().trim();
+                String situacaoTextBox = driver.findElement(By.id("body_txtSituacao")).getAttribute("value").trim();
+
+                // Atualiza os dados no objeto Fila
+                item.setMst(mst);
+                item.setSituacaoTextBox(situacaoTextBox);
+
+                item.setStatus("PROCESSADO");
+                filaRepository.save(item);
+
+                TimeUnit.SECONDS.sleep(2);
+            }
 
         } catch (Exception e) {
+            // Em caso de qualquer exceção, atualiza o status do item para "ERRO"
             item.setStatus("ERRO");
             filaRepository.save(item);
             TimeUnit.SECONDS.sleep(5);
