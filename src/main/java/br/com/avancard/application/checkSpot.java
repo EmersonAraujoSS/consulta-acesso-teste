@@ -109,10 +109,20 @@ public class checkSpot {
 
                 //Processar a consulta e extrair os dados necessários
                 String mst = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[2]")).getText().trim();
+                String msr = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[3]")).getText().trim();
+                String msd = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[4]")).getText().trim();
+                String mct = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[2]")).getText().trim();
+                String mcr = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[3]")).getText().trim();
+                String mcd = driver.findElement(By.xpath("//tr[@id='body_rptMargens_headerservico_2']/td[4]")).getText().trim();
                 String situacaoTextBox = driver.findElement(By.id("body_txtSituacao")).getAttribute("value").trim();
 
                 // Atualiza os dados no objeto Fila
                 item.setMst(mst);
+                item.setMsr(msr);
+                item.setMsd(msd);
+                item.setMct(mct);
+                item.setMcr(mcr);
+                item.setMcd(mcd);
                 item.setSituacaoTextBox(situacaoTextBox);
 
                 item.setStatus("PROCESSADO");

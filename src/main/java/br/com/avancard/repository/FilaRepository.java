@@ -19,7 +19,7 @@ public class FilaRepository {
 
     public List<Fila> findByStatus(String status) throws SQLException {
         List<Fila> filas = new ArrayList<>();
-        String sql = "SELECT id, cpf, matricula, status,mst,situacaoTextBox FROM fila WHERE status = ?";
+        String sql = "SELECT id, cpf, matricula, status,mst,msr,msd,mct,mcr,mcd,situacaoTextBox FROM fila WHERE status = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, status);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -30,6 +30,11 @@ public class FilaRepository {
                     fila.setMatricula(resultSet.getString("matricula"));
                     fila.setStatus(resultSet.getString("status"));
                     fila.setMst(resultSet.getString("mst"));
+                    fila.setMsr(resultSet.getString("msr"));
+                    fila.setMsd(resultSet.getString("msd"));
+                    fila.setMct(resultSet.getString("mct"));
+                    fila.setMcr(resultSet.getString("mcr"));
+                    fila.setMcd(resultSet.getString("mcd"));
                     fila.setSituacaoTextBox(resultSet.getString("situacaoTextBox"));
                     filas.add(fila);
                 }
@@ -39,12 +44,17 @@ public class FilaRepository {
     }
 
     public void save(Fila fila) throws SQLException {
-        String sql = "UPDATE fila SET status = ?, mst = ?, situacaoTextBox = ? WHERE id = ?";
+        String sql = "UPDATE fila SET status = ?, mst = ?, msr = ?, msd = ?, mct = ?, mcr = ?, mcd = ?, situacaoTextBox = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, fila.getStatus());
             statement.setString(2, fila.getMst());
-            statement.setString(3, fila.getSituacaoTextBox());
-            statement.setInt(4, fila.getId());
+            statement.setString(3, fila.getMsr());
+            statement.setString(4, fila.getMsd());
+            statement.setString(5, fila.getMct());
+            statement.setString(6, fila.getMcr());
+            statement.setString(7, fila.getMcd());
+            statement.setString(8, fila.getSituacaoTextBox());
+            statement.setInt(9, fila.getId());
             statement.executeUpdate();
         }
     }
